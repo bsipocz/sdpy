@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import astropy.io.fits as pyfits
 import numpy as np
 import warnings
@@ -195,7 +196,7 @@ def calibrate_cube_data(filename, outfilename, scanrange=[],
         Level of verbosity.  0 is none, 1 is some, 2 is very, 3 is very lots
     tatm: float
         The atmospheric temperature.  Will be subtracted from TSYS using the
-        provided optical depth and assuming a plane-parallel atmosphere, 
+        provided optical depth and assuming a plane-parallel atmosphere,
         which is good down to 8 degrees
         (http://www.gb.nrao.edu/~rmaddale/GBT/HighPrecisionCalibrationFromSingleDishTelescopes.pdf)
     trec: float
@@ -323,7 +324,7 @@ def calibrate_cube_data(filename, outfilename, scanrange=[],
                                                         airmass_method=airmass_method)
         if verbose:
             log.info("EXPERIMENTAL: min_scale_reference = {0}".format(ref_scale))
-    
+
     if highfreq:
         newdatadict = cal_loop_highfreq(data, dataarr, newdatadict, OKsource,  speclen,
                                         airmass_method, LSTrefs, exslice,
@@ -343,12 +344,12 @@ def calibrate_cube_data(filename, outfilename, scanrange=[],
     colsP = pyfits.ColDefs(cols)
     #tablehdu = copy.copy(filepyfits[extension])
     #tablehdu.data = colsP
-    # this lies and claims corrupted 
+    # this lies and claims corrupted
     tablehdu = pyfits.new_table(colsP, header=filepyfits[extension].header)
     phdu = pyfits.PrimaryHDU(header=filepyfits[0].header)
     hdulist = pyfits.HDUList([phdu,tablehdu])
     hdulist.writeto(outfilename,clobber=clobber)
-    
+
     #tablehdu.writeto(outfilename,clobber=clobber)
 
     if return_data:
@@ -362,7 +363,7 @@ def compute_tsys(data, tsysmethod='perscan', OKsource=None, CalOn=None,
 
     from GBTIDL's dcmeantsys.py
     ;  mean_tsys = tcal * mean(nocal) / (mean(withcal-nocal)) + tcal/2.0
-    
+
     """
     if CalOn is None:
         CalOn  = (data['CAL']=='T')
@@ -406,7 +407,7 @@ def compute_tsys(data, tsysmethod='perscan', OKsource=None, CalOn=None,
         tsys = (offmean / diffmean * tcal + tcal/2.0)
         data['TSYS'][CalOn & OKsource] = tsys
         data['TSYS'][CalOff & OKsource] = tsys
-        
+
     return data['TSYS']
 
 def elev_to_airmass(elev, method='maddalena'):
@@ -523,7 +524,7 @@ def get_reference(data, refscans, CalOn=None, CalOff=None,
 
     return LSTrefs, refarray, ref_cntstoK, tsysref
 
-def cal_loop_lowfreq(data, dataarr, newdatadict, OKsource, CalOn, CalOff, 
+def cal_loop_lowfreq(data, dataarr, newdatadict, OKsource, CalOn, CalOff,
                      speclen, airmass_method, LSTrefs, min_scale_reference,
                      exslice, tatm, tauz, refscans, namelist, refarray,
                      off_template):
@@ -588,7 +589,7 @@ def cal_loop_lowfreq(data, dataarr, newdatadict, OKsource, CalOn, CalOff,
             specRef = off_template * specRef[exslice].mean() / off_template[exslice].mean()
 
         tsys = data['TSYS'][specindOn]
-        
+
         # I don't think this is right... the correct way is to make sure
         # specRef moves with Spec
         #tsys_eff = tsys * np.exp(tau*airmass) - (np.exp(tau*airmass)-1)*tatm
